@@ -1,1 +1,140 @@
-ssss
+(Method 1)
+$make manuconfig
+$make -j 
+$make install
+$make modules
+$make modules_install
+update grub
+
+
+(Method 2)
+#compile 5.0.0+ kernel
+
+#install pacakges
+$sudo apt-get install libncurses-dev gawk flex bison openssl libssl-dev dkms libelf-dev libudev-dev libpci-dev libiberty-dev autoconf linux-kernel-devel fakeroot kernel-wedge build-essential
+
+#download source code
+$mkdir kernel
+$cd kernel
+$git clone git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable.git
+$cd linux-stable
+
+##rollback to an old commit
+$git checkout xxxx
+
+#config
+$make menuconfig
+[exit][yes]
+(check debug_info to be 'y' in .config)
+
+#compile kernel, get three deb packages
+#before compile if you meet problem, refer this one
+#https://askubuntu.com/questions/1329538/compiling-the-kernel-5-11-11
+find out .config file and delate 'debian/canonical-certs.pem'
+
+#add name to Makefile and compile
+$sudo fakeroot make-kpkg --initrd --revision=1 kernel_image kernel_headers kernel_debug
+
+#if you wanna compile with Your_Name rarther than add name to makfile 
+$fakeroot make-kpkg --initrd --revision=1 --append-to-version=Your_Name kernel_image kernel_headers kernel_debug
+
+#or use make to compile
+make deb-pkg
+
+#dsc file
+dpkg-source -x yourfile.dsc
+
+#install package
+dpkg -i xxxx.deb
+
+
+(Method 3)
+#compile old kernel
+
+#Install packages
+$sudo apt-get install git
+sudo apt-get install fakeroot kernel-wedge build-essential makedumpfile kernel-package libncurses5 libncurses5-dev
+sudo apt-get build-dep --no-install-recommends linux-image-$(uname -r)
+	
+
+#download kernel source
+$mkdir ~/kernel_src
+$cd ~/kernel_src
+
+$git clone git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable.git
+$cd linux-stable
+$git tag -l | less
+
+
+#visualize commit history
+$git log --graph
+$gitk
+$gitg
+
+====
+#checkout a branch
+$git checkout -b  3.7-rc1 v3.7-rc1
+
+
+#rollback to an old commit
+#before patch
+$git  checkout  6a08f447  . 
+
+#with patch
+$git  checkout  b71fc079 .
+
+################### general kernel compilation (worked for ubt 12.04, 14.04)
+#Configure your Kernel
+make menuconfig
+	
+#or
+cp /boot/config-2.6.32 ./.config
+make oldconfig
+
+
+#if error occurs on some modules:
+#vim .config
+#change error related modules to ``n''
+drivers/gpu/drm/nouveau n
+
+        STMMAC Platform bus support (STMMAC_PLATFORM) [Y/n/?] (NEW) n
+	
+#change this version name to avoid confusing w/ existing build 
+#vim Makefile
+EXTRAVERSION = -rc5-6a08f447  
+
+
+#Build your Kernel
+	#General rule, concurrency level = number of processor cores + 1
+	export CONCURRENCY_LEVEL=3
+	
+	make-kpkg clean
+	time fakeroot make-kpkg --initrd kernel-image kernel-headers
+	
+	#direct copy may not work; type in VM
+
+	#generate two files in ..:
+	#linux-image-2.6.37_2.6.37-10.00.Custom_amd64.deb
+	#linux-headers-2.6.37_2.6.37-10.00.Custom_amd64.deb
+	
+Install your kernel
+	
+	cd ..   #kernel_src
+	dir  #should see the two generated files
+	       
+	sudo dpkg -i linux-image-2.6.37_2.6.37-10.00.Custom_amd64.deb
+	sudo dpkg -i linux-headers-2.6.37_2.6.37-10.00.Custom_amd64.deb
+	
+
+Update your grub.cfg
+	
+	#modify /etc/default/grub, add timeout time, comment out the line by adding a # to the start like:
+	sudo vim /etc/default/grub
+	# GRUB_HIDDEN_TIMEOUT=0
+	
+	sudo update-grub
+	
+	#see new kernel option added to grub
+	vim /boot/grub/grub.cfg
+
+
