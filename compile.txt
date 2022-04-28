@@ -1,5 +1,5 @@
 (Method 1)
-$make manuconfig
+$make menuconfig
 $make -j 
 $make install
 $make modules
