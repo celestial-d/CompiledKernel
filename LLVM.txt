@@ -1,0 +1,37 @@
+(General)
+$sudo apt-get isntall clang llvm
+$make CC=clang defconfig
+$make 
+$make modules
+$sudo make install
+$sudo make modules_install
+
+(wllvm--can extract bc code directly, the following example uses clang11 as an example)
+$ sudo apt install clang-11 llvm-11 (if install clang and llvm straightly ,the default version of clang-9&llvm-9 will be installed to ubuntu 20.04)
+$ pip install wllvm 
+$ sudo cp ~/.local/bin/* /bin 
+
+  $sudo update-alternatives --remove-all clang
+  $sudo update-alternatives --install /usr/bin/clang++ clang++ /usr/bin/clang++-11 100 
+  $sudo update-alternatives --install /usr/bin/clang clang /usr/bin/clang-11 100
+
+  $clang --version
+  $export LLVM_COMPILER=clang
+  $make CC=wllvm defconfig
+  $make CC=wllvm -j$(nproc) # build Linux kernel with llvm toochain
+
+  $sudo update-alternatives --install /usr/bin/llvm-link llvm-link /usr/bin/llvm-link-11 100
+  $extract-bc vmlinux # extract bitcode from vmlinux
+  $llvm-dis-11 vmlinux.bc 
+  $opt -dot-cfg vmlinux.ll(.bc)  (generate cfg for the compiled kernel)
+  
+(scan-build)
+$sudo apt-get install clang-tools-11 (if install clang-tools, the default version is for llvm10)
+
+$make menuconfig
+$scan-build make CC=clang -j$(nproc) #build linux kenrel with static analyzer
+(if use -o option, the output directory will change. The default output folder is under /tmp)
+
+potencial error:
+	building kernel with non-retpoline compiler 
+	solution: Change CONFIG_RETPOLINE to n.

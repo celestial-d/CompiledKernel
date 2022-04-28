@@ -4,7 +4,7 @@ You can download kernel 5.2 in kernel.org
 
 ## General compilation
 
-Please check Compile.txt
+Please check compile.txt
 
 ## LLVM based compilation
 
