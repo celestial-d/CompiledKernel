@@ -1,1 +1,5 @@
-sssss
+(Kernel module compilation)
+$make CC=[compiler] [CONFIG in makefile]=m -C [kernel soure code location] M=[output location] modules
+
+Example:
+$make CC=wllvm CONFIG_LIBNVDIMM=m -C /home/xxx/Downloads/linux-5.2/ M=/home/xxx/linux-5.2/drivers/nvdimm/ modules
