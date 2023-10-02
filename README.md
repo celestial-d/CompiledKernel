@@ -1,6 +1,6 @@
 # KernelCompilation
 
-You can download kernel 5.2 in kernel.org(https://www.kernel.org/)
+You can download kernel 5.2 in [kernel.org](https://www.kernel.org/)
 
 ## General compilation
 
