@@ -1,12 +1,12 @@
-# KernelCompilation
+# Kernel Compilation
 
 You can download kernel 5.2 in [kernel.org](https://www.kernel.org/)
 
-## General compilation
+## General Compilation
 
 Please check compile.txt
 
-## LLVM based compilation
+## LLVM Based Compilation
 
 Please check LLVM.txt
 
