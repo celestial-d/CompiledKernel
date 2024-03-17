@@ -31,6 +31,7 @@ $sudo apt-get install clang-tools-11 (if install clang-tools, the default versio
 $make menuconfig
 $scan-build make CC=clang -j$(nproc) #build linux kenrel with static analyzer
 (if use -o option, the output directory will change. The default output folder is under /tmp)
+(right now use "scan-build --use-cc=clang make" due to wrapper problem(https://lore.kernel.org/lkml/CAK7LNATPWBz4-pF4Doom=_3WqDyghSGH+rUUVtWwmj48qsp1=w@mail.gmail.com/))
 
 potencial error:
 	building kernel with non-retpoline compiler 
